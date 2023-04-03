@@ -10,7 +10,7 @@ class UsersController {
     const {name, email, password} = request.body;
 
   
-  response.json({name, email, password}); // respondendo no formato JSON
+  response.status(201).json({name, email, password}); // respondendo no formato JSON
   }
 
 }
