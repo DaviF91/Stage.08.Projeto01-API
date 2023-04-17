@@ -1,5 +1,8 @@
 require("express-async-errors"); //importando biblioteca express-async-errors
 
+//importa database
+const database = require("./database/sqlite");
+
 const AppError = require('./utils/AppError'); // importa AppError
 const express = require("express"); // importa o express
 
@@ -10,6 +13,7 @@ app.use(express.json()); //definindo o padrão para receber as informações no 
 
 app.use(routes);
 
+database();
 //erro = capturar errro da requisição
 // response = devolver a resposta com o tipo de erro
 // next = caso queira avançar para uma proxima etapa
