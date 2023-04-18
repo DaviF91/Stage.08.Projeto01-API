@@ -1,19 +1,20 @@
 require("express-async-errors"); //importando biblioteca express-async-errors
 
 //importa database
-const database = require("./database/sqlite");
-
+const migrationsRun = require("./database/sqlite/migrations");
 const AppError = require('./utils/AppError'); // importa AppError
+
 const express = require("express"); // importa o express
 
 const routes = require("./routes");
+
+migrationsRun();
 
 const app = express(); // inicializa o express
 app.use(express.json()); //definindo o padrão para receber as informações no corpo da requisição (post - insomnia)
 
 app.use(routes);
 
-database();
 //erro = capturar errro da requisição
 // response = devolver a resposta com o tipo de erro
 // next = caso queira avançar para uma proxima etapa
