@@ -5,6 +5,8 @@
     * update - PUT para atualizar um registro.
     * delete = DELETE para remover um registro.
 */
+const {hash} = require("bcryptjs");
+
 const AppError = require('../utils/AppError');
 
 const sqliteConnection = require('../database/sqlite');
@@ -20,9 +22,13 @@ class UsersController {
       throw new AppError("Este email já esta em uso")
 
   }
+
+  //senha criptografada
+  const hashedPassword = await hash(password, 8);
+
   //INSERE NA TABELA DE USUÁRIO
   await database.run("INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-    [name, email, password]
+    [name, email, hashedPassword]
   );
 
   return response.status(201).json();
