@@ -5,7 +5,9 @@
     * update - PUT para atualizar um registro.
     * delete = DELETE para remover um registro.
 */
-const {hash} = require("bcryptjs");
+
+//adicionado o compare para poder comparar a senha digitada com a senha criptografada
+const {hash, compare} = require("bcryptjs");
 const AppError = require('../utils/AppError');
 const sqliteConnection = require('../database/sqlite');
 
@@ -36,7 +38,8 @@ class UsersController {
 
   //update users
   async update(request,response){
-    const {name, email} = request.body;
+    //add password e old_password
+    const {name, email, password, old_password} = request.body;
     const {id} = request.params;
 
     const database = await  sqliteConnection();
@@ -55,14 +58,31 @@ class UsersController {
     user.name = name;
     user.email = email;
 
+    //criando a validação para a atualização de senha
+    if( password && !old_password){
+      throw new AppError("Você precisa informar a senha antiga para definir a nova senha");
+    }
+
+    if( password && old_password){
+      //comparando a senha com a criptografada
+      const checkOldPassword =  await compare(old_password, user.password)
+
+      if(!checkOldPassword){
+        throw new AppError("A senha antiga não confere");
+      }
+
+      user.password = await hash(password, 8)
+    }
+
     //atualiza na tabela de usuáros e defina os valores
     await database.run(`
     UPDATE users SET
     name = ?, 
     email = ?,
+    password = ?,
     updated_at = ?
     WHERE id = ?`,
-    [user.name, user.email, new Date(), id]
+    [user.name, user.email, user.password, new Date(), id]
     );
 
     return response.json();
