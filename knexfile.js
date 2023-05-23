@@ -6,6 +6,9 @@ module.exports = {
     connection: {
       filename: path.resolve(__dirname, "src", "database", "database.db" ) //local onde esta o banco de dados
     },
+    migrations: {
+      directory: path.resolve(__dirname, "src", "database", "knex", "migrations")
+    },
     useNullAsDefault: true // propriedade padrão sqlite
   },
 };
